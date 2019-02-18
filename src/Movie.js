@@ -19,18 +19,38 @@ import "./Movie.css";
 // }
 
 // Turn into the FUNCTIONAL COMPONENT
-function Movie({ title, poster }) {
+function Movie({ title, poster, genres, synopsis }) {
   return (
-    <div>
-      <MoviePoster poster={poster} />
-      <h1>{title}</h1>
+    <div className="Movie">
+      <div className="Movie__Columns">
+        <MoviePoster poster={poster} alt={title} />
+      </div>
+      <div className="Movie__Columns">
+        <h1>{title}</h1>
+        <div className="Movie__Genres">
+          {genres.map((genre, index) => (
+            <MovieGenre genre={genre} key={index} />
+          ))}
+        </div>
+        <p className="Movie__Synopsis">{synopsis}</p>
+      </div>
     </div>
   );
 }
 
+function MovieGenre({ genre }) {
+  return <span className="Movie__Genre">{genre}</span>;
+}
+
 Movie.propTypes = {
   title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired
+  poster: PropTypes.string.isRequired,
+  genres: PropTypes.string.isRequired,
+  synopsis: PropTypes.string.isRequired
+};
+
+MovieGenre.propTypes = {
+  genre: PropTypes.string.isRequired
 };
 
 // class MoviePoster extends Component {
@@ -44,12 +64,13 @@ Movie.propTypes = {
 // }
 
 // Turn into the FUNCTIONAL COMPONENT
-function MoviePoster({ poster }) {
-  return <img src={poster} alt="Movie Poster" />;
+function MoviePoster({ poster, alt }) {
+  return <img src={poster} alt={alt} title={alt} className="Movie__Poster" />;
 }
 
 MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired
+  poster: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired
 };
 
 export default Movie;

@@ -10,50 +10,46 @@ class App extends Component {
   state = {};
 
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        movies: [
-          {
-            title: "Coco",
-            poster:
-              "https://www.slashfilm.com/wp/wp-content/images/2017-bestposter-coco.jpg"
-          },
-          {
-            title: "Frozen 2",
-            poster:
-              "https://m.media-amazon.com/images/M/MV5BODYwMzYzODEzNV5BMl5BanBnXkFtZTgwOTgxOTE0NzM@._V1_.jpg"
-          },
-          {
-            title: "Avengers: Endgame",
-            poster:
-              "https://m.media-amazon.com/images/M/MV5BNGZiMzBkZjMtNjE3Mi00MWNlLWIyYjItYTk3MjY0Yjg5ODZkXkEyXkFqcGdeQXVyNDg4NjY5OTQ@._V1_SY1000_CR0,0,675,1000_AL_.jpg"
-          },
-          {
-            title: "Spider-Man: Into the Spider-Verse",
-            poster:
-              "https://m.media-amazon.com/images/M/MV5BMjMwNDkxMTgzOF5BMl5BanBnXkFtZTgwNTkwNTQ3NjM@._V1_SY1000_CR0,0,674,1000_AL_.jpg"
-          },
-          {
-            title: "Spider-Man: Far From Home",
-            poster:
-              "https://m.media-amazon.com/images/M/MV5BMjE1MzE5MjczMl5BMl5BanBnXkFtZTgwOTgwMTgxNzM@._V1_SY1000_CR0,0,674,1000_AL_.jpg"
-          }
-        ]
-      });
-    }, 5000);
+    this._getMovies();
   }
 
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />;
+    const movies = this.state.movies.map(movie => {
+      console.log(movie);
+      return (
+        <Movie
+          title={movie.title_long}
+          poster={movie.medium_cover_image}
+          genres={movie.genres}
+          synopsis={movie.synopsis}
+          key={movie.id}
+        />
+      );
     });
     return movies;
   };
 
+  _getMovies = async () => {
+    const movies = await this._callApi();
+    this.setState({
+      movies
+    });
+  };
+
+  _callApi = () => {
+    return fetch(
+      "https://yts.am/api/v2/list_movies.json?sort_by=download_count"
+    )
+      .then(response => response.json())
+      .then(json => json.data.movies)
+      .catch(err => console.log(err));
+  };
+
   render() {
+    const { movies } = this.state;
     return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : "Loading"}
+      <div className={movies ? "App" : "App--loading"}>
+        {movies ? this._renderMovies() : "Loading"}
       </div>
     );
   }
